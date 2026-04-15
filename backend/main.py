@@ -22,8 +22,27 @@ def home():
 
 @app.post("/chat-log")
 def chat_log(data: dict):
+    db = SessionLocal()
+
     result = app_graph.invoke({"input": data["message"]})
-    return result
+    ai_data = result["output"]
+
+    # Save to DB
+    interaction = Interaction(
+        hcp_name=ai_data.get("hcp_name"),
+        summary=ai_data.get("summary"),
+        products_discussed=ai_data.get("products_discussed"),
+        sentiment=ai_data.get("sentiment"),
+        next_action=ai_data.get("next_action")
+    )
+
+    db.add(interaction)
+    db.commit()
+
+    return {
+        "ai_output": ai_data,
+        "message": "Saved successfully"
+    }
 
 @app.post("/log-interaction")
 def log_interaction(data: dict):
@@ -42,3 +61,38 @@ def get_interactions():
 @app.get("/test")
 def test():
     return {"message": "API working"}
+
+@app.put("/edit-interaction/{id}")
+def edit_interaction(id: int, data: dict):
+    db = SessionLocal()
+
+    interaction = db.query(Interaction).filter(Interaction.id == id).first()
+
+    if not interaction:
+        return {"error": "Interaction not found"}
+
+    for key, value in data.items():
+        setattr(interaction, key, value)
+
+    db.commit()
+    db.close()
+
+    return {"message": "Updated successfully"}
+
+@app.get("/search")
+def search_interaction(query: str):
+    db = SessionLocal()
+
+    results = db.query(Interaction).filter(
+        Interaction.hcp_name.contains(query) |
+        Interaction.products_discussed.contains(query)
+    ).all()
+
+    db.close()
+    return results
+
+@app.post("/suggest-next-action")
+def suggest_next_action(data: dict):
+    prompt = f"Suggest next action for this interaction: {data['summary']}"
+    result = app_graph.invoke({"input": prompt})
+    return result
