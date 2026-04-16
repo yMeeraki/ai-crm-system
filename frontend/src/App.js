@@ -2,25 +2,24 @@ import InteractionForm from "./components/InteractionForm";
 import InteractionTable from "./components/InteractionTable";
 import SearchBar from "./components/SearchBar";
 import ChatBox from "./components/ChatBox";
+import { ToastContainer } from "react-toastify";
 
 function App() {
   return (
-    <div style={{ padding: 20 }}>
-      <h2>HCP Interaction Logger</h2>
+    <>
+      <div className="container">
+        <h2>HCP Interaction Dashboard</h2>
 
-      <div style={{ display: "flex", gap: 20 }}>
-        <InteractionForm />
-        <ChatBox />
+        <div className="grid">
+          <InteractionForm />
+          <ChatBox />
+        </div>
+
+        <SearchBar />
+        <InteractionTable />
       </div>
-
-      <br />
-
-      <SearchBar />
-
-      <br />
-
-      <InteractionTable />
-    </div>
+      <ToastContainer />
+    </>
   );
 }
 

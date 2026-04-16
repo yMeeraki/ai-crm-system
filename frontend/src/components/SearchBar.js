@@ -19,11 +19,12 @@ const SearchBar = () => {
 
   return (
     <input
+    className="search"
       type="text"
       placeholder="Search by HCP or product..."
       value={query}
       onChange={(e) => handleSearch(e.target.value)}
-      style={{ padding: 8, width: "300px" }}
+      
     />
   );
 };

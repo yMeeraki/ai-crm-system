@@ -22,10 +22,10 @@ const InteractionTable = () => {
   };
 
   return (
-    <div>
+    <div className="card">
       <h3>All Interactions</h3>
 
-      <table border="1" cellPadding="10">
+      <table>
         <thead>
           <tr>
             <th>HCP</th>
@@ -33,7 +33,7 @@ const InteractionTable = () => {
             <th>Products</th>
             <th>Sentiment</th>
             <th>Next Action</th>
-            <th>Action</th>
+            <th>Actions</th>
           </tr>
         </thead>
 
@@ -45,9 +45,25 @@ const InteractionTable = () => {
               <td>{item.products_discussed}</td>
               <td>{item.sentiment}</td>
               <td>{item.next_action}</td>
+
               <td>
-                <button onClick={() => handleEdit(item)}>Edit</button>
-                <button onClick={() => handleDelete(item.id)}>Delete</button>
+                <button
+                  className="btn-warning"
+                  onClick={() => dispatch(setFormData(item))}
+                >
+                  Edit
+                </button>
+
+                <button
+                  className="btn-danger"
+                  onClick={() => {
+                    if (window.confirm("Are you sure you want to delete?")) {
+                      dispatch(deleteInteraction(item.id));
+                    }
+                  }}
+                >
+                  Delete
+                </button>
               </td>
             </tr>
           ))}
