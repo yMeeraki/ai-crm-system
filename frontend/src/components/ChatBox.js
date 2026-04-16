@@ -26,7 +26,7 @@ const ChatBox = () => {
 
       <br /><br />
 
-      <button onClick={handleSend}>
+      <button onClick={handleSend} disabled={loading.chat}>
         {loading ? "Processing..." : "Log with AI"}
       </button>
     </div>

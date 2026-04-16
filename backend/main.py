@@ -25,16 +25,16 @@ def chat_log(data: dict):
     db = SessionLocal()
 
     result = app_graph.invoke({"input": data["message"]})
-    ai_data = result["output"]
 
-    # Save to DB
-    interaction = Interaction(
-        hcp_name=ai_data.get("hcp_name"),
-        summary=ai_data.get("summary"),
-        products_discussed=ai_data.get("products_discussed"),
-        sentiment=ai_data.get("sentiment"),
-        next_action=ai_data.get("next_action")
-    )
+    ai_data = {
+        "hcp_name": result.get("hcp_name"),
+        "summary": result.get("summary"),
+        "products_discussed": result.get("products_discussed"),
+        "sentiment": result.get("sentiment"),
+        "next_action": result.get("next_action"),
+    }
+
+    interaction = Interaction(**ai_data)
 
     db.add(interaction)
     db.commit()
@@ -96,3 +96,18 @@ def suggest_next_action(data: dict):
     prompt = f"Suggest next action for this interaction: {data['summary']}"
     result = app_graph.invoke({"input": prompt})
     return result
+
+@app.delete("/delete-interaction/{id}")
+def delete_interaction(id: int):
+    db = SessionLocal()
+
+    interaction = db.query(Interaction).filter(Interaction.id == id).first()
+
+    if not interaction:
+        return {"error": "Not found"}
+
+    db.delete(interaction)
+    db.commit()
+    db.close()
+
+    return {"message": "Deleted successfully"}

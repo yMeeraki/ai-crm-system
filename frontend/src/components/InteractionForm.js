@@ -1,6 +1,11 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { updateField } from "../features/interactionSlice";
+import {
+  updateField,
+  saveInteraction,
+  updateInteraction,
+  resetForm,
+} from "../features/interactionSlice";
 
 const InteractionForm = () => {
   const dispatch = useDispatch();
@@ -15,52 +20,37 @@ const InteractionForm = () => {
     );
   };
 
+  const handleSave = () => {
+    if (form.id) {
+      dispatch(updateInteraction({ id: form.id, data: form }));
+    } else {
+      dispatch(saveInteraction(form));
+    }
+    dispatch(resetForm());
+  };
+
   return (
-    <div style={{ border: "1px solid #ddd", padding: 20 }}>
+    <div>
       <h3>Interaction Form</h3>
 
-      <input
-        name="hcp_name"
-        placeholder="HCP Name"
-        value={form.hcp_name}
-        onChange={handleChange}
-      />
-
+      <input name="hcp_name" value={form.hcp_name} onChange={handleChange} placeholder="HCP Name" />
       <br /><br />
 
-      <textarea
-        name="summary"
-        placeholder="Summary"
-        value={form.summary}
-        onChange={handleChange}
-      />
-
+      <textarea name="summary" value={form.summary} onChange={handleChange} placeholder="Summary" />
       <br /><br />
 
-      <input
-        name="products_discussed"
-        placeholder="Products"
-        value={form.products_discussed}
-        onChange={handleChange}
-      />
-
+      <input name="products_discussed" value={form.products_discussed} onChange={handleChange} placeholder="Products" />
       <br /><br />
 
-      <input
-        name="sentiment"
-        placeholder="Sentiment"
-        value={form.sentiment}
-        onChange={handleChange}
-      />
-
+      <input name="sentiment" value={form.sentiment} onChange={handleChange} placeholder="Sentiment" />
       <br /><br />
 
-      <textarea
-        name="next_action"
-        placeholder="Next Action"
-        value={form.next_action}
-        onChange={handleChange}
-      />
+      <textarea name="next_action" value={form.next_action} onChange={handleChange} placeholder="Next Action" />
+      <br /><br />
+
+      <button onClick={handleSave}>
+        {form.id ? "Update" : "Save"}
+      </button>
     </div>
   );
 };
