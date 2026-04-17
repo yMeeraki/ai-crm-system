@@ -156,7 +156,11 @@ td[colspan="6"] {
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
-  .dashboard {
+  .grid {
+    flex-direction: column;
+  }
+  tr{
+    display: flex;
     flex-direction: column;
   }
 }

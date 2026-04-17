@@ -158,19 +158,17 @@ const interactionSlice = createSlice({
       .addCase(sendChat.fulfilled, (state, action) => {
         state.loading = false;
 
-        const ai = action.payload?.ai_output || {};
+        const ai = action.payload?.ai_output;
+
+        if (!ai) return; // safety
 
         state.formData = {
           ...state.formData,
-          hcp_name: ai.hcp_name || state.formData.hcp_name,
-          summary: ai.summary || state.formData.summary,
-          products_discussed:
-            ai.products_discussed || state.formData.products_discussed,
-          sentiment: ai.sentiment || state.formData.sentiment,
-          next_action: ai.next_action || state.formData.next_action,
+          ...ai, // direct merge (cleaner + safer)
         };
       })
       .addCase(sendChat.rejected, (state) => {
+        toast.error("Rejected")
         state.loading = false;
       })
 

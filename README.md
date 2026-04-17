@@ -16,7 +16,6 @@ The system leverages LangGraph and Large Language Models (LLMs) to automate data
 - AI-generated next best action
 - Edit and update interactions
 - Delete with confirmation
-- Real-time search functionality
 - Toast notifications for actions
 - Clean dashboard UI
 
@@ -146,8 +145,7 @@ Input (User Chat)
 | POST   | /log-interaction         | Save interaction                |
 | GET    | /interactions            | Fetch all interactions          |
 | PUT    | /edit-interaction/{id}   | Update interaction              |
-| DELETE | /delete-interaction/{id} | Delete interaction              |
-| GET    | /search                  | Search interactions             |
+| DELETE | /delete-interaction/{id} | Delete interaction              |           
 | POST   | /suggest-next-action     | AI suggestion                   |
 
 ---

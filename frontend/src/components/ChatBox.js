@@ -13,8 +13,8 @@ const ChatBox = () => {
     setChat([...chat, { role: "user", text: msg }]);
 
     const res = await dispatch(sendChat(msg));
-    const reply = res.payload?.message || "Done";
-
+    const reply = res.payload?.message || "AI processed the interaction";
+    
     setChat((prev) => [...prev, { role: "ai", text: reply }]);
     setMsg("");
   };

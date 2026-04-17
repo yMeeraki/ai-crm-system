@@ -1,6 +1,5 @@
 import InteractionForm from "./components/InteractionForm";
 import InteractionTable from "./components/InteractionTable";
-import SearchBar from "./components/SearchBar";
 import ChatBox from "./components/ChatBox";
 import { ToastContainer } from "react-toastify";
 

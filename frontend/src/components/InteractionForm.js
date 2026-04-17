@@ -25,8 +25,7 @@ const InteractionForm = () => {
       form.hcp_name &&
       form.summary &&
       form.products_discussed &&
-      form.sentiment &&
-      form.next_action
+      form.sentiment 
     );
   };
 
