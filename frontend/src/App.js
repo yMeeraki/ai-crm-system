@@ -7,7 +7,7 @@ import { ToastContainer } from "react-toastify";
 function App() {
   return (
     <>
-      <div className="container">
+      <div className="dashboard">
         <h2>HCP Interaction Dashboard</h2>
 
         <div className="grid">
@@ -15,7 +15,6 @@ function App() {
           <ChatBox />
         </div>
 
-        <SearchBar />
         <InteractionTable />
       </div>
       <ToastContainer />

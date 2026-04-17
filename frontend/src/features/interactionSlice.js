@@ -2,8 +2,18 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { toast } from "react-toastify";
 
-const API = process.env.REACT_APP_API_URL;
+const API = "http://localhost:8000";
 
+/* ================= CHAT ================= */
+export const sendChat = createAsyncThunk(
+  "interaction/sendChat",
+  async (message) => {
+    const res = await axios.post(`${API}/chat-log`, { message });
+    return res.data;
+  },
+);
+
+/* ================= SUGGEST NEXT ACTION ================= */
 export const suggestNextAction = createAsyncThunk(
   "interaction/suggestNextAction",
   async (summary) => {
@@ -14,9 +24,9 @@ export const suggestNextAction = createAsyncThunk(
   },
 );
 
-/* ===== CREATE ===== */
+/* ================= CREATE ================= */
 export const saveInteraction = createAsyncThunk(
-  "interaction/save",
+  "interaction/saveInteraction",
   async (data, { dispatch }) => {
     await axios.post(`${API}/log-interaction`, data);
     toast.success("Saved successfully");
@@ -24,18 +34,18 @@ export const saveInteraction = createAsyncThunk(
   },
 );
 
-/* ===== FETCH ===== */
+/* ================= FETCH ================= */
 export const fetchInteractions = createAsyncThunk(
-  "interaction/fetch",
+  "interaction/fetchInteractions",
   async () => {
     const res = await axios.get(`${API}/interactions`);
     return res.data;
   },
 );
 
-/* ===== UPDATE ===== */
+/* ================= UPDATE ================= */
 export const updateInteraction = createAsyncThunk(
-  "interaction/update",
+  "interaction/updateInteraction",
   async ({ id, data }, { dispatch }) => {
     await axios.put(`${API}/edit-interaction/${id}`, data);
     toast.success("Updated successfully");
@@ -44,9 +54,9 @@ export const updateInteraction = createAsyncThunk(
   },
 );
 
-/* ===== DELETE ===== */
+/* ================= DELETE ================= */
 export const deleteInteraction = createAsyncThunk(
-  "interaction/delete",
+  "interaction/deleteInteraction",
   async (id, { dispatch }) => {
     await axios.delete(`${API}/delete-interaction/${id}`);
     toast.success("Deleted successfully");
@@ -55,7 +65,7 @@ export const deleteInteraction = createAsyncThunk(
   },
 );
 
-/* ===== SEARCH ===== */
+/* ================= SEARCH ================= */
 export const searchInteractions = createAsyncThunk(
   "interaction/search",
   async (query) => {
@@ -64,15 +74,7 @@ export const searchInteractions = createAsyncThunk(
   },
 );
 
-/* ===== CHAT ===== */
-export const sendChat = createAsyncThunk(
-  "interaction/sendChat",
-  async (message) => {
-    const res = await axios.post(`${API}/chat-log`, { message });
-    return res.data;
-  },
-);
-
+/* ================= SLICE ================= */
 const interactionSlice = createSlice({
   name: "interaction",
   initialState: {
@@ -136,11 +138,18 @@ const interactionSlice = createSlice({
 
       /* UPDATE */
       .addCase(updateInteraction.fulfilled, (state) => {
-        state.formData.id = null;
+        state.formData = {
+          id: null,
+          hcp_name: "",
+          summary: "",
+          products_discussed: "",
+          sentiment: "",
+          next_action: "",
+        };
       })
 
       /* DELETE */
-      .addCase(deleteInteraction.fulfilled, (state) => {})
+      .addCase(deleteInteraction.fulfilled, () => {})
 
       /* CHAT */
       .addCase(sendChat.pending, (state) => {
@@ -149,26 +158,30 @@ const interactionSlice = createSlice({
       .addCase(sendChat.fulfilled, (state, action) => {
         state.loading = false;
 
-        const data = action.payload?.ai_output || {};
+        const ai = action.payload?.ai_output || {};
 
         state.formData = {
-          id: null,
-          hcp_name: data.hcp_name || "",
-          summary: data.summary || "",
-          products_discussed: data.products_discussed || "",
-          sentiment: data.sentiment || "",
-          next_action: data.next_action || "",
+          ...state.formData,
+          hcp_name: ai.hcp_name || state.formData.hcp_name,
+          summary: ai.summary || state.formData.summary,
+          products_discussed:
+            ai.products_discussed || state.formData.products_discussed,
+          sentiment: ai.sentiment || state.formData.sentiment,
+          next_action: ai.next_action || state.formData.next_action,
         };
       })
       .addCase(sendChat.rejected, (state) => {
         state.loading = false;
       })
 
+      /* NEXT ACTION */
       .addCase(suggestNextAction.fulfilled, (state, action) => {
         state.formData.next_action = action.payload.next_action || "";
       });
   },
 });
+
+/* ================= EXPORTS ================= */
 
 export const { updateField, setFormData, resetForm } = interactionSlice.actions;
 

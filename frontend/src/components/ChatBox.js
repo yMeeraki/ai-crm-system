@@ -1,43 +1,45 @@
 import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { sendChat } from "../features/interactionSlice";
-import { suggestNextAction } from "../features/interactionSlice";
 
 const ChatBox = () => {
-  const [message, setMessage] = useState("");
+  const [msg, setMsg] = useState("");
+  const [chat, setChat] = useState([]);
   const dispatch = useDispatch();
-  const loading = useSelector((state) => state.interaction.loading);
 
-  const handleSend = async () => {
-    if (!message.trim()) return;
+  const send = async () => {
+    if (!msg) return;
 
-    const result = await dispatch(sendChat(message.trim()));
+    setChat([...chat, { role: "user", text: msg }]);
 
-    const summary = result.payload?.ai_output?.summary || "";
+    const res = await dispatch(sendChat(msg));
+    const reply = res.payload?.message || "Done";
 
-    if (summary) {
-      dispatch(suggestNextAction(summary));
-    }
-
-    setMessage("");
+    setChat((prev) => [...prev, { role: "ai", text: reply }]);
+    setMsg("");
   };
 
   return (
-    <div className="card">
+    <div className="card chat-container">
       <h3>AI Assistant</h3>
 
+      <div className="chat-messages">
+        {chat.map((c, i) => (
+          <div key={i} className={c.role === "user" ? "chat-user" : "chat-ai"}>
+            {c.text}
+          </div>
+        ))}
+      </div>
+
       <textarea
-        rows="4"
+        className="chat-input"
+        value={msg}
+        onChange={(e) => setMsg(e.target.value)}
         placeholder="Describe interaction..."
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
       />
 
-      <br />
-      <br />
-
-      <button className="btn-primary" onClick={handleSend}>
-        {loading ? "Processing..." : "Log with AI"}
+      <button onClick={send} className="btn-success">
+        Send
       </button>
     </div>
   );

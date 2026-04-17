@@ -1,11 +1,16 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchInteractions, setFormData } from "../features/interactionSlice";
-import { deleteInteraction } from "../features/interactionSlice";
+import {
+  fetchInteractions,
+  deleteInteraction,
+  setFormData,
+} from "../features/interactionSlice";
 
 const InteractionTable = () => {
   const dispatch = useDispatch();
-  const interactions = useSelector((state) => state.interaction.interactions);
+  const interactions = useSelector(
+    (state) => state.interaction.interactions
+  );
 
   useEffect(() => {
     dispatch(fetchInteractions());
@@ -13,6 +18,7 @@ const InteractionTable = () => {
 
   const handleEdit = (item) => {
     dispatch(setFormData(item));
+    window.scrollTo({ top: 0, behavior: "smooth" }); // UX improvement
   };
 
   const handleDelete = (id) => {
@@ -38,35 +44,37 @@ const InteractionTable = () => {
         </thead>
 
         <tbody>
-          {interactions.map((item) => (
-            <tr key={item.id}>
-              <td>{item.hcp_name}</td>
-              <td>{item.summary}</td>
-              <td>{item.products_discussed}</td>
-              <td>{item.sentiment}</td>
-              <td>{item.next_action}</td>
-
-              <td>
-                <button
-                  className="btn-warning"
-                  onClick={() => dispatch(setFormData(item))}
-                >
-                  Edit
-                </button>
-
-                <button
-                  className="btn-danger"
-                  onClick={() => {
-                    if (window.confirm("Are you sure you want to delete?")) {
-                      dispatch(deleteInteraction(item.id));
-                    }
-                  }}
-                >
-                  Delete
-                </button>
-              </td>
+          {interactions.length === 0 ? (
+            <tr>
+              <td colSpan="6">No data found</td>
             </tr>
-          ))}
+          ) : (
+            interactions.map((item) => (
+              <tr key={item.id}>
+                <td>{item.hcp_name}</td>
+                <td>{item.summary}</td>
+                <td>{item.products_discussed}</td>
+                <td>{item.sentiment}</td>
+                <td>{item.next_action}</td>
+
+                <td>
+                  <button
+                    className="btn-warning"
+                    onClick={() => handleEdit(item)}
+                  >
+                    Edit
+                  </button>
+
+                  <button
+                    className="btn-danger"
+                    onClick={() => handleDelete(item.id)}
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
     </div>

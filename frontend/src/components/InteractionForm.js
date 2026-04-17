@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   updateField,
@@ -11,8 +11,6 @@ const InteractionForm = () => {
   const dispatch = useDispatch();
   const form = useSelector((state) => state.interaction.formData);
 
-  const [loading, setLoading] = useState(false);
-
   const handleChange = (e) => {
     dispatch(
       updateField({
@@ -24,11 +22,11 @@ const InteractionForm = () => {
 
   const isFormValid = () => {
     return (
-      form.hcp_name.trim() &&
-      form.summary.trim() &&
-      form.products_discussed.trim() &&
-      form.sentiment.trim() &&
-      form.next_action.trim()
+      form.hcp_name &&
+      form.summary &&
+      form.products_discussed &&
+      form.sentiment &&
+      form.next_action
     );
   };
 
@@ -56,67 +54,37 @@ const InteractionForm = () => {
         value={form.hcp_name}
         onChange={handleChange}
         placeholder="HCP Name"
-        style={{
-          border: !form.hcp_name ? "1px solid red" : "1px solid #ccc",
-        }}
       />
-      <br />
-      <br />
 
       <textarea
         name="summary"
         value={form.summary}
         onChange={handleChange}
         placeholder="Summary"
-        style={{
-          border: !form.summary ? "1px solid red" : "1px solid #ccc",
-        }}
       />
-      <br />
-      <br />
 
       <input
         name="products_discussed"
         value={form.products_discussed}
         onChange={handleChange}
         placeholder="Products"
-        style={{
-          border: !form.products_discussed ? "1px solid red" : "1px solid #ccc",
-        }}
       />
-      <br />
-      <br />
 
       <input
         name="sentiment"
         value={form.sentiment}
         onChange={handleChange}
         placeholder="Sentiment"
-        style={{
-          border: !form.sentiment ? "1px solid red" : "1px solid #ccc",
-        }}
       />
-      <br />
-      <br />
 
       <textarea
         name="next_action"
         value={form.next_action}
         onChange={handleChange}
         placeholder="Next Action"
-        style={{
-          border: !form.next_action ? "1px solid red" : "1px solid #ccc",
-        }}
       />
-      <br />
-      <br />
 
-      <button
-        onClick={handleSave}
-        disabled={!isFormValid()}
-        className="btn-success"
-        style={{ opacity: isFormValid() ? 1 : 0.5 }}
-      >
+      <button onClick={handleSave} className="btn-success">
         {form.id ? "Update" : "Save"}
       </button>
     </div>

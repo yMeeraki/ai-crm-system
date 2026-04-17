@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+sqlalchemy
+pymysql
+python-dotenv
+
+langchain
+langchain-groq
+langgraph
+groq

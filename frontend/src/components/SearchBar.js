@@ -1,17 +1,15 @@
+import React from "react";
 import { useDispatch } from "react-redux";
 import { searchInteractions, fetchInteractions } from "../features/interactionSlice";
-import { useState } from "react";
 
 const SearchBar = () => {
   const dispatch = useDispatch();
-  const [query, setQuery] = useState("");
 
-  const handleSearch = (value) => {
-    setQuery(value);
+  const handleSearch = (e) => {
+    const value = e.target.value;
 
     if (value.trim() === "") {
-      // if empty → load all data
-      dispatch(fetchInteractions());
+      dispatch(fetchInteractions()); // reset list
     } else {
       dispatch(searchInteractions(value));
     }
@@ -19,12 +17,8 @@ const SearchBar = () => {
 
   return (
     <input
-    className="search"
-      type="text"
       placeholder="Search by HCP or product..."
-      value={query}
-      onChange={(e) => handleSearch(e.target.value)}
-      
+      onChange={handleSearch}
     />
   );
 };
