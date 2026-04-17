@@ -15,16 +15,54 @@ def extract_all(state):
     text = state["input"]
 
     prompt = f"""
-    Extract CRM data. Return JSON:
-    {{
-      "hcp_name":"",
-      "summary":"",
-      "products_discussed":"",
-      "sentiment":"",
-      "next_action":""
-    }}
-    Text: {text}
-    """
+You are a CRM AI assistant for pharmaceutical sales.
+
+Extract structured information from the text.
+
+Return ONLY valid JSON:
+
+{{
+  "hcp_name": "",
+  "summary": "",
+  "products_discussed": "",
+  "sentiment": "Positive | Neutral | Negative",
+  "next_action": ""
+}}
+
+STRICT RULES:
+
+1. hcp_name:
+- MUST extract doctor name starting with "Dr"
+- Example: "Dr Sharma", "Dr Mehta"
+- If not found → "Unknown Doctor"
+
+2. summary:
+- 1 short professional sentence
+
+3. products_discussed:
+- Extract actual product names (like insulin, antibiotics, diabetes drugs)
+- NEVER return "Not specified" if product exists
+- If multiple → comma separated
+
+4. sentiment:
+- Positive → interest / excited / wants details
+- Neutral → normal discussion
+- Negative → rejection / not interested
+- ONLY one word
+
+5. next_action:
+- MUST ALWAYS be generated
+- Short (2–5 words)
+- Examples:
+  - "Schedule follow-up"
+  - "Send pricing details"
+  - "Provide samples"
+
+6. DO NOT leave ANY field empty
+
+Text:
+{text}
+"""
 
     res = llm.invoke(prompt)
     match = re.search(r"\{.*\}", res.content, re.DOTALL)

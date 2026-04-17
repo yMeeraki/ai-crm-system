@@ -19,10 +19,17 @@ app.add_middleware(
 
 @app.post("/chat-log")
 def chat_log(data: dict):
-    result = app_graph.invoke({"input": data["message"]})
+    next_action = data.get("next_action") or "Schedule follow-up"
+
     return {
-        "ai_output": result.get("output", {}),
-        "message": result.get("message", "")
+        "ai_output": {
+            "hcp_name": data.get("hcp_name") or "Unknown Doctor",
+            "summary": data.get("summary") or "",
+            "products_discussed": data.get("products_discussed") or "Not specified",
+            "sentiment": data.get("sentiment") or "Neutral",
+            "next_action": next_action,
+        },
+        "message": "Interaction captured successfully."
     }
 
 @app.post("/log-interaction")
